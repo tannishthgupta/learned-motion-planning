@@ -18,7 +18,9 @@ Test sets
                 training (long walls, a C-shaped trap, a single doorway)
 
 Methods (identical step size, goal bias, tolerance and iteration cap):
-    RRT*, RRT* + learned, RRT* + Dijkstra, RRT, RRT + learned
+    RRT*, RRT* + informed (Informed RRT*, Gammell et al. 2014),
+    RRT* + learned, RRT* + learned + informed, RRT* + Dijkstra,
+    RRT, RRT + learned
 
 What is measured
 ----------------
@@ -49,7 +51,7 @@ from multiprocessing import Pool
 import numpy as np
 
 from env import generate_suite, get_scenario, SCENARIOS
-from planners import RRTPlanner, RRTStarPlanner, verify_path
+from planners import InformedSampler, RRTPlanner, RRTStarPlanner, verify_path
 
 from .dataset import make_problem
 
@@ -61,7 +63,8 @@ NEAR_OPT = 1.05   # "within 5% of best known"
 
 COMMON = dict(step_size=5.0, goal_bias=0.05, goal_tolerance=5.0, time_budget=10.0)
 
-RRTSTAR_METHODS = ["RRT*", "RRT* + learned", "RRT* + Dijkstra"]
+RRTSTAR_METHODS = ["RRT*", "RRT* + informed", "RRT* + learned",
+                   "RRT* + learned + informed", "RRT* + Dijkstra"]
 RRT_METHODS = ["RRT", "RRT + learned"]
 
 # ----------------------------------------------------------------------------
@@ -82,12 +85,16 @@ def _init_worker(model_path):
 
 
 def make_planner(method, seed, mix, max_iters):
+    """Build a planner from its name, e.g. "RRT* + learned + informed"."""
     from .sampler import DijkstraSampler, LearnedSampler
     sampler = None
-    if method.endswith("+ learned"):
+    if "+ learned" in method:
         sampler = LearnedSampler(_MODEL, mix=mix)
-    elif method.endswith("+ Dijkstra"):
+    elif "+ Dijkstra" in method:
         sampler = DijkstraSampler(mix=mix)
+    if method.endswith("+ informed"):
+        # Wraps whatever was chosen above (None = uniform = textbook Informed RRT*).
+        sampler = InformedSampler(base=sampler)
     cls = RRTStarPlanner if method.startswith("RRT*") else RRTPlanner
     return cls(max_iters=max_iters, seed=seed, sampler=sampler, name=method, **COMMON)
 
@@ -107,7 +114,7 @@ def _run_job(job):
                    if m["success"] else [])
     return {
         "set": set_name, "problem": env.name, "method": method, "seed": seed,
-        "mix": mix if "+" in method else float("nan"),
+        "mix": mix if ("learned" in method or "Dijkstra" in method) else float("nan"),
         "success": bool(m["success"]),
         "first_iter": m["first_solution_iteration"] if m["success"] else -1,
         "first_time": m["first_solution_time"],
@@ -420,7 +427,12 @@ def report(rows, max_iters, mix, suffix=""):
     tests = []
     for set_name in ["test", "benchmark"]:
         for k in sorted({k for k in (500, 1000, max_iters) if k <= max_iters}):
-            for a, b in [("RRT* + learned", "RRT*"), ("RRT* + learned", "RRT* + Dijkstra")]:
+            for a, b in [("RRT* + learned", "RRT*"),
+                         ("RRT* + informed", "RRT*"),
+                         ("RRT* + learned", "RRT* + informed"),
+                         ("RRT* + learned + informed", "RRT* + informed"),
+                         ("RRT* + learned + informed", "RRT* + learned"),
+                         ("RRT* + learned", "RRT* + Dijkstra")]:
                 t = paired_test(rows, set_name, a, b, k)
                 if t:
                     tests.append(t)

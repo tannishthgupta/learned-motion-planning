@@ -36,12 +36,26 @@ from viz.plot import PLANNER_COLORS, plot_environment, plot_path, plot_tree
 from .evaluate import COMMON, MODEL_PATH, OUT_DIR, best_known, load_rows
 
 LEARNED = "#6250d6"
+# Composite encoding: colour = where samples come from (aqua uniform, violet
+# learned); dashed = "+ informed" (restricted to the Informed RRT* ellipse once
+# a path exists). Four separate hues would fail the colour-vision checks, and
+# this way the pairing itself is visible.
+DASHED = (0, (5, 3))
 METHOD_STYLE = {
-    "RRT*": dict(color=PLANNER_COLORS["RRT*"], linestyle="-", label="RRT* (uniform)"),
-    "RRT* + learned": dict(color=LEARNED, linestyle="-", label="RRT* + learned"),
-    "RRT* + Dijkstra": dict(color=INK_MUTED, linestyle=(0, (4, 3)),
-                            label="RRT* + exact Dijkstra (reference)"),
+    "RRT*": dict(color=PLANNER_COLORS["RRT*"], linestyle="-", label="RRT* (uniform)",
+                 short="uniform"),
+    "RRT* + informed": dict(color=PLANNER_COLORS["RRT*"], linestyle=DASHED,
+                            label="Informed RRT*", short="informed"),
+    "RRT* + learned": dict(color=LEARNED, linestyle="-", label="RRT* + learned",
+                           short="learned"),
+    "RRT* + learned + informed": dict(color=LEARNED, linestyle=DASHED,
+                                      label="RRT* + learned + informed",
+                                      short="learned+inf."),
+    "RRT* + Dijkstra": dict(color=INK_MUTED, linestyle=(0, (1, 2)),
+                            label="RRT* + exact Dijkstra (reference)", short="Dijkstra"),
 }
+# Interquartile bands only for the two solid lines, or the plot turns to mush.
+BANDED = {"RRT*", "RRT* + learned"}
 SET_TITLES = {"test": "Held-out random problems",
               "benchmark": "Main benchmark worlds",
               "scenarios": "Hand-designed scenarios (unseen structure)"}
@@ -74,7 +88,7 @@ def chart_convergence(rows, max_iters, out_path):
     sets = [s for s in ("test", "benchmark", "scenarios") if any(r["set"] == s for r in rows)]
 
     fig = _new_figure(4.6 * len(sets), 4.9)
-    _header(fig, "Learned sampling makes RRT* converge in fewer iterations",
+    _header(fig, "Learned sampling helps from the first iteration; Informed RRT* only after a path exists",
             "Median normalised path cost (1.00 = best cost any method found on that problem) "
             "vs iteration; bands are the interquartile range." + chr(10) +
             "A run with no path yet counts as infinitely long, so each curve starts "
@@ -93,7 +107,7 @@ def chart_convergence(rows, max_iters, out_path):
             ordered = np.sort(stack, axis=0)
             med, q1, q3 = _rank(ordered, .5), _rank(ordered, .25), _rank(ordered, .75)
             band = np.isfinite(q3)
-            if band.any() and method != "RRT* + Dijkstra":
+            if band.any() and method in BANDED:
                 ax.fill_between(grid[band], q1[band], q3[band], color=style["color"],
                                 alpha=0.10, linewidth=0, zorder=2)
             show = np.isfinite(med)
@@ -111,11 +125,10 @@ def chart_convergence(rows, max_iters, out_path):
         hi = min(hi, 1.6)
         ax.set_ylim(0.98, hi)
         span = (hi - 0.98) * 0.07
-        short = {"RRT*": "uniform", "RRT* + learned": "learned", "RRT* + Dijkstra": "Dijkstra"}
         for y, method in ends:
             y_lab = max(y, last + span)
             last = y_lab
-            ax.annotate(short[method], xy=(1.0, y_lab), xycoords=("axes fraction", "data"),
+            ax.annotate(METHOD_STYLE[method]["short"], xy=(1.0, y_lab), xycoords=("axes fraction", "data"),
                         xytext=(5, 0), textcoords="offset points", va="center", fontsize=8.5,
                         color=INK_SECONDARY,
                         fontweight="bold" if method == "RRT* + learned" else "normal")
@@ -129,7 +142,8 @@ def chart_convergence(rows, max_iters, out_path):
     handles = [Line2D([], [], color=s["color"], linestyle=s["linestyle"], linewidth=2,
                       label=s["label"]) for s in METHOD_STYLE.values()]
     leg = fig.legend(handles=handles, loc="upper left", bbox_to_anchor=(0.012, 0.80),
-                     ncol=3, frameon=False, fontsize=9, columnspacing=1.8)
+                     ncol=len(handles), frameon=False, fontsize=9, columnspacing=1.6,
+                     handlelength=2.6)
     for t in leg.get_texts():
         t.set_color(INK_SECONDARY)
     return _save(fig, out_path)

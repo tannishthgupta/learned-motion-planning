@@ -208,6 +208,7 @@ class RRTStarPlanner(Planner):
                         first_length = tree.cost[goal_idx]
                         first_iter = iterations
                         self.cost_history.append((iterations, first_time, first_length))
+                        self.sampler.notify_best_cost(first_length)
                         if self.stop_on_first_solution:
                             break
                 elif cost_via_new < tree.cost[goal_idx]:
@@ -221,6 +222,8 @@ class RRTStarPlanner(Planner):
                 best = tree.cost[goal_idx]
                 if not self.cost_history or best < self.cost_history[-1][2] - 1e-12:
                     self.cost_history.append((iterations, time.perf_counter() - t0, best))
+                    # Informed RRT* shrinks its sampling ellipse here.
+                    self.sampler.notify_best_cost(best)
 
         if goal_idx is None:
             reason = ("time budget exceeded" if self._out_of_time(t0)
