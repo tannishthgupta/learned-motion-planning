@@ -1,0 +1,3 @@
+# Core project: environment, A*, RRT, RRT*, benchmark, charts
+numpy>=1.24
+matplotlib>=3.7

@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
+.idea/
+
+# Training data is regenerated in ~10 s by `python -m learning.dataset`
+learning/data/
+
+# Throwaway smoke-test outputs (`--quick` runs)
+*_quick.*
+
+# Local notes for Claude Code, not part of the project
+claude.md
+CLAUDE.md

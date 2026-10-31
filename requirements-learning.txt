@@ -1,0 +1,4 @@
+# Learned-sampling extension (learning/), on top of the core requirements
+-r requirements.txt
+scipy>=1.10
+torch>=2.0

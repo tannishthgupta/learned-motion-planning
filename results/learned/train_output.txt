@@ -1,0 +1,32 @@
+train 10000  val 1000  params 922209  pos_frac 0.181  pos_weight 4.53
+epoch  1  train 0.7847  val 0.5867  IoU 0.632  (40 s)  * saved
+epoch  2  train 0.5264  val 0.4510  IoU 0.603  (39 s)  * saved
+epoch  3  train 0.4029  val 0.3998  IoU 0.655  (41 s)  * saved
+epoch  4  train 0.3215  val 0.3490  IoU 0.724  (41 s)  * saved
+epoch  5  train 0.2712  val 0.2592  IoU 0.689  (40 s)  * saved
+epoch  6  train 0.2464  val 0.2247  IoU 0.705  (39 s)  * saved
+epoch  7  train 0.2208  val 0.1990  IoU 0.742  (39 s)  * saved
+epoch  8  train 0.1983  val 0.1793  IoU 0.762  (38 s)  * saved
+epoch  9  train 0.1801  val 0.2203  IoU 0.779  (39 s)
+epoch 10  train 0.1851  val 0.2571  IoU 0.740  (38 s)
+epoch 11  train 0.1632  val 0.1517  IoU 0.785  (39 s)  * saved
+epoch 12  train 0.1561  val 0.1522  IoU 0.797  (122 s)
+epoch 13  train 0.1375  val 0.1328  IoU 0.822  (131 s)  * saved
+epoch 14  train 0.1328  val 0.1276  IoU 0.816  (126 s)  * saved
+epoch 15  train 0.1287  val 0.1247  IoU 0.826  (130 s)  * saved
+epoch 16  train 0.1221  val 0.1101  IoU 0.840  (130 s)  * saved
+epoch 17  train 0.1144  val 0.1138  IoU 0.843  (130 s)
+epoch 18  train 0.1101  val 0.1184  IoU 0.826  (131 s)
+epoch 19  train 0.1062  val 0.0981  IoU 0.848  (129 s)  * saved
+epoch 20  train 0.1011  val 0.1014  IoU 0.846  (136 s)
+epoch 21  train 0.0958  val 0.0995  IoU 0.858  (128 s)
+epoch 22  train 0.0908  val 0.0927  IoU 0.867  (132 s)  * saved
+epoch 23  train 0.0906  val 0.0885  IoU 0.867  (130 s)  * saved
+epoch 24  train 0.0855  val 0.0859  IoU 0.876  (46 s)  * saved
+epoch 25  train 0.0811  val 0.0832  IoU 0.875  (37 s)  * saved
+epoch 26  train 0.0784  val 0.0823  IoU 0.881  (37 s)  * saved
+epoch 27  train 0.0769  val 0.0806  IoU 0.880  (37 s)  * saved
+epoch 28  train 0.0741  val 0.0801  IoU 0.882  (37 s)  * saved
+epoch 29  train 0.0736  val 0.0794  IoU 0.884  (37 s)  * saved
+epoch 30  train 0.0721  val 0.0800  IoU 0.886  (37 s)
+best val loss 0.0794 -> learning\models\sampler_unet.pt

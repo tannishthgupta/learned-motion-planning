@@ -1,0 +1,470 @@
+{
+  "config": {
+    "densities": {
+      "sparse": 0.1,
+      "moderate": 0.2,
+      "cluttered": 0.3
+    },
+    "n_envs_per_density": 10,
+    "n_trials": 5,
+    "time_budget": 10.0,
+    "max_iters": 10000,
+    "astar_resolution": 1.0,
+    "step_size": 5.0,
+    "goal_bias": 0.05,
+    "goal_tolerance": 5.0,
+    "suite_seed": 0
+  },
+  "environments": [
+    {
+      "name": "sparse_00",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.11342497135955873,
+      "n_obstacles": 11,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_01",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.11115634338296408,
+      "n_obstacles": 11,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_02",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.1093918653951762,
+      "n_obstacles": 12,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_03",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.10776936392740699,
+      "n_obstacles": 8,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_04",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.10806078524742618,
+      "n_obstacles": 10,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_05",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.11088225502113867,
+      "n_obstacles": 13,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_06",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.10017509237019595,
+      "n_obstacles": 11,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_07",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.1102392386850215,
+      "n_obstacles": 12,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_08",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.11474282106995393,
+      "n_obstacles": 13,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "sparse_09",
+      "density_label": "sparse",
+      "density_target": 0.1,
+      "density_actual": 0.11108673160823909,
+      "n_obstacles": 12,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_00",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.21084278191601596,
+      "n_obstacles": 26,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_01",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.20524174508670098,
+      "n_obstacles": 21,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_02",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.2040517597338501,
+      "n_obstacles": 18,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_03",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.20705519557601446,
+      "n_obstacles": 18,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_04",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.2030164464181797,
+      "n_obstacles": 19,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_05",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.2128229750864292,
+      "n_obstacles": 21,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_06",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.21035143495249772,
+      "n_obstacles": 19,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_07",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.20870460170707641,
+      "n_obstacles": 21,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_08",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.20560529606894934,
+      "n_obstacles": 21,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "moderate_09",
+      "density_label": "moderate",
+      "density_target": 0.2,
+      "density_actual": 0.2133837894636477,
+      "n_obstacles": 22,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_00",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.3091822235475023,
+      "n_obstacles": 28,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_01",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.30771241308705766,
+      "n_obstacles": 25,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_02",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.31139845208430195,
+      "n_obstacles": 33,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_03",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.30179450034356947,
+      "n_obstacles": 26,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_04",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.30276035836489584,
+      "n_obstacles": 37,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_05",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.3091339289589637,
+      "n_obstacles": 31,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_06",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.30445396148695647,
+      "n_obstacles": 30,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_07",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.3022286730661878,
+      "n_obstacles": 27,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_08",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.30073647927688585,
+      "n_obstacles": 24,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    },
+    {
+      "name": "cluttered_09",
+      "density_label": "cluttered",
+      "density_target": 0.3,
+      "density_actual": 0.31195012943327843,
+      "n_obstacles": 29,
+      "start": [
+        5.0,
+        5.0
+      ],
+      "goal": [
+        95.0,
+        95.0
+      ]
+    }
+  ]
+}
