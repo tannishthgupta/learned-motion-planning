@@ -27,7 +27,9 @@ _INITIAL_CAPACITY = 1024
 
 class Tree:
     def __init__(self, root):
-        self._coords = np.empty((_INITIAL_CAPACITY, 2), dtype=float)
+        # Dimension comes from the root: 2 for (x, y), N for an N-joint arm.
+        self.dim = len(root)
+        self._coords = np.empty((_INITIAL_CAPACITY, self.dim), dtype=float)
         self.parent = []
         self.cost = []
         self.children = []
@@ -43,7 +45,7 @@ class Tree:
         if self.n == self._coords.shape[0]:
             # Amortised doubling: growing by one would make building an
             # n-node tree O(n^2) in copying alone.
-            self._coords = np.resize(self._coords, (self._coords.shape[0] * 2, 2))
+            self._coords = np.resize(self._coords, (self._coords.shape[0] * 2, self.dim))
 
         self._coords[self.n] = p
         self.parent.append(parent)
@@ -57,11 +59,13 @@ class Tree:
 
     @property
     def coords(self):
-        """View of the live coordinates, shape (n, 2)."""
+        """View of the live coordinates, shape (n, dim)."""
         return self._coords[:self.n]
 
     def point(self, i):
-        return (self._coords[i, 0], self._coords[i, 1])
+        if self.dim == 2:
+            return (self._coords[i, 0], self._coords[i, 1])
+        return tuple(self._coords[i])
 
     # ------------------------------------------------------------------
     # Queries

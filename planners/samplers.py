@@ -175,6 +175,10 @@ class InformedSampler:
     def prepare(self, env, start, goal):
         self.base.prepare(env, start, goal)
         self.c_best = math.inf
+        self.dim = len(start)
+        if self.dim != 2:
+            self._prepare_nd(start, goal)
+            return
         self.start = (float(start[0]), float(start[1]))
         self.goal = (float(goal[0]), float(goal[1]))
         dx = self.goal[0] - self.start[0]
@@ -211,6 +215,50 @@ class InformedSampler:
                     return p
         return self._sample_ellipse(env, rng)
 
+    # ------------------------------------------------------------------
+    # N dimensions (the robot arm): the ellipse becomes an ellipsoid
+    # ------------------------------------------------------------------
+
+    def _prepare_nd(self, start, goal):
+        """Set up the rotation that maps the unit ball onto the ellipsoid.
+
+        In 2-D a single angle is enough. In N-D the paper builds a rotation
+        matrix C whose first column points from start to goal, using an SVD
+        (Gammell et al. 2014, Alg. 2). The other N-1 axes can point anywhere
+        perpendicular, since the ellipsoid is round across the start-goal line.
+        """
+        self.start = np.asarray(start, dtype=float)
+        self.goal = np.asarray(goal, dtype=float)
+        self.c_min = float(np.linalg.norm(self.goal - self.start))
+        self.centre = (self.start + self.goal) / 2.0
+        a1 = (self.goal - self.start) / self.c_min
+        e1 = np.zeros(self.dim)
+        e1[0] = 1.0
+        u, _, vt = np.linalg.svd(np.outer(a1, e1))
+        # The middle matrix makes C a proper rotation (determinant +1).
+        mid = np.ones(self.dim)
+        mid[-1] = np.linalg.det(u) * np.linalg.det(vt)
+        self.rotation = u @ np.diag(mid) @ vt
+
+    def _sample_ellipsoid_nd(self, env, rng, max_tries=100):
+        """Uniform sample from the N-D ellipsoid, as in _sample_ellipse."""
+        d = self.dim
+        r1 = self.c_best / 2.0
+        r2 = math.sqrt(max(self.c_best ** 2 - self.c_min ** 2, 0.0)) / 2.0
+        radii = np.full(d, r2)
+        radii[0] = r1
+        for _ in range(max_tries):
+            # Uniform in the unit ball: a random direction (normalised
+            # Gaussian) times a radius u^(1/d), which spreads points evenly
+            # by volume -- the N-D version of the sqrt used in 2-D.
+            g = np.array([rng.gauss(0.0, 1.0) for _ in range(d)])
+            ball = g / np.linalg.norm(g) * rng.random() ** (1.0 / d)
+            p = self.rotation @ (radii * ball) + self.centre
+            p = tuple(float(v) for v in p)
+            if env.in_bounds(p):
+                return p
+        return env.sample(rng)
+
     def _sample_ellipse(self, env, rng, max_tries=100):
         """Uniform sample from the ellipse (clipped to the workspace).
 
@@ -221,6 +269,8 @@ class InformedSampler:
             r1 = c_best / 2                          (along start -> goal)
             r2 = sqrt(c_best^2 - c_min^2) / 2        (across)
         """
+        if self.dim != 2:
+            return self._sample_ellipsoid_nd(env, rng, max_tries)
         r1 = self.c_best / 2.0
         r2 = math.sqrt(max(self.c_best ** 2 - self.c_min ** 2, 0.0)) / 2.0
         for _ in range(max_tries):

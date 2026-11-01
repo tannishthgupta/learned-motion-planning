@@ -8,7 +8,9 @@ simulated mobile robot in a dependency-free 2D environment.
 ## Status
 
 Simulation world, all three planners, the benchmark harness and the evaluation
-figures are **complete**, plus a learned-sampling extension for RRT* (see below). 69 unit tests passing. Remaining work is the written
+figures are **complete**, plus two extensions: learned sampling for RRT*, and
+planning for a planar robot arm with N joints (see below). 84 unit tests
+passing. Remaining work is the written
 report and slides, which draw on `results/summary.md` and `results/chart_*.png`.
 
 ## Requirements
@@ -35,7 +37,9 @@ python run_benchmark.py           # full sweep (~3 min), then tables + charts
 python run_benchmark.py --quick   # small sweep, sanity check
 python run_benchmark.py --from-cache   # re-analyse the last run, no re-running
 
-python -m unittest discover -s tests -t . -v    # 69 tests (torch tests skip if absent)
+python arm_demo.py                # robot-arm planning figures -> results/arm/
+
+python -m unittest discover -s tests -t . -v    # 84 tests (torch tests skip if absent)
 ```
 
 `--from-cache` matters: the sweep takes minutes, and re-running it just to
@@ -58,6 +62,14 @@ planners/
     astar.py         A*   — Hart, Nilsson & Raphael 1968
     rrt.py           RRT  — LaValle 1998
     rrt_star.py      RRT* — Karaman & Frazzoli 2011
+    samplers.py      uniform, heatmap and Informed RRT* sampling (pluggable)
+arm/
+    robot.py         planar N-joint arm and its forward kinematics
+    collision.py     vectorised segment geometry for the links
+    environment.py   joint-space planning problem (same interface as env/)
+    problems.py      the 2-joint scenario and random arm worlds
+    plot.py          world view and joint-space (C-space) figures
+learning/            learned sampling: data, U-Net, training, evaluation
 benchmark/
     runner.py        runs every planner over an identical world set
     analysis.py      aggregation, including the common-solved-subset logic
@@ -227,6 +239,47 @@ Iterations until within 5% of the best known cost (lower is better):
 Figures: `results/learned/learned_convergence.png`,
 `learned_heatmaps.png` (prediction and trees on every scenario plus the
 failure case), `learned_training.png`.
+
+## Extension: planar robot arm (in progress)
+
+The same RRT, RRT* and Informed RRT* code now plans for a planar arm with any
+number of joints. Nothing in the planners is arm-specific: they talk to
+`arm.ArmEnvironment` through the same five questions they ask the 2-D world
+(sample, in bounds, state valid, motion valid, free volume). A configuration
+is a tuple of joint angles, and path cost is total joint rotation in radians.
+
+```python
+from arm import random_arm_problem
+from planners import RRTStarPlanner, InformedSampler
+
+env = random_arm_problem(dof=5, seed=0)
+path, metrics = RRTStarPlanner(step_size=0.5, goal_tolerance=0.5,
+                               sampler=InformedSampler()).plan(env)
+```
+
+![2-joint arm in the world and in joint space](results/arm/two_link_cspace.png)
+
+**What changed to make this work.** The search tree, steering, distance and
+RRT*'s rewiring radius `gamma (log n / n)^(1/d)` now work in any dimension d,
+and Informed RRT*'s ellipse becomes an N-D ellipsoid (rotation built with an
+SVD, as in the paper). For d = 2 the original arithmetic is kept exactly: 60
+saved runs from the learned-sampling evaluation reproduce to the last digit.
+
+**Motion checking is guaranteed, not sampled at a guess.** When the joints
+move by dq, no point of the arm moves further than `sum_i |dq_i| * R_i`
+(R_i = length from joint i to the tip). The motion is split into steps small
+enough that every in-between pose is within delta/2 of a checked pose, and the
+checked poses must clear the obstacles by link radius + delta/2. So a motion
+the check accepts cannot clip an obstacle between two checks. A test re-checks
+accepted motions 20x more finely and never finds a collision.
+
+**Status.** Stage 1 of 3 is done: arm model, collision checking, N-D planners,
+figures. Next: (2) the scaling experiment, 2 to 7 joints, exact grid search vs
+sampling; (3) a learned sampler that proposes good arm poses directly. Early
+runs show high-joint random worlds are hard: some 6- and 7-joint worlds took
+~20 000 iterations or went unsolved, and a "reach into a shelf slot" scenario
+was dropped from this stage because no planner solved it in 20 000
+iterations, so it is unconfirmed whether it can be solved at all.
 
 ## Design decisions worth defending in the viva
 

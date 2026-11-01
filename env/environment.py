@@ -174,6 +174,18 @@ class Environment:
         """Nominal fraction of the workspace occupied by obstacles."""
         return self.obstacle_area() / (self.width * self.height)
 
+    #: Number of coordinates in a configuration: (x, y). The arm environment
+    #: in arm/ has one per joint. RRT* reads this for its rewiring radius.
+    dimension = 2
+
+    def free_volume(self):
+        """Collision-free area, used by RRT* to size its rewiring ball.
+
+        Floored at 5% of the workspace so an over-estimated obstacle area
+        (overlaps are counted twice) can never make it zero or negative.
+        """
+        return self.width * self.height * max(0.05, 1.0 - self.obstacle_density())
+
     # ------------------------------------------------------------------
     # Serialisation -- lets the benchmark replay the exact same world set
     # ------------------------------------------------------------------
