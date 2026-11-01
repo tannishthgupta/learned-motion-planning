@@ -8,7 +8,7 @@ simulated mobile robot in a dependency-free 2D environment.
 ## Status
 
 Simulation world, all three planners, the benchmark harness and the evaluation
-figures are **complete**, plus a learned-sampling extension for RRT* (see below). 61 unit tests passing. Remaining work is the written
+figures are **complete**, plus a learned-sampling extension for RRT* (see below). 69 unit tests passing. Remaining work is the written
 report and slides, which draw on `results/summary.md` and `results/chart_*.png`.
 
 ## Requirements
@@ -35,7 +35,7 @@ python run_benchmark.py           # full sweep (~3 min), then tables + charts
 python run_benchmark.py --quick   # small sweep, sanity check
 python run_benchmark.py --from-cache   # re-analyse the last run, no re-running
 
-python -m unittest discover -s tests -t . -v    # 61 tests (torch tests skip if absent)
+python -m unittest discover -s tests -t . -v    # 69 tests (torch tests skip if absent)
 ```
 
 `--from-cache` matters: the sweep takes minutes, and re-running it just to
@@ -159,7 +159,7 @@ and stay PyTorch-free.
 python -m learning.dataset              # 10k train + 1k val problems (~10 s)
 python -m learning.train                # 30 epochs, ~20 min on CPU
 python -m learning.evaluate --tune      # choose the mix on VALIDATION maps
-python -m learning.evaluate             # final run on the test sets (3 750 runs)
+python -m learning.evaluate             # final run on the test sets (5 250 runs)
 python -m learning.plots                # figures from the saved results
 ```
 
@@ -173,27 +173,45 @@ randomised so the model cannot memorise "go along the diagonal".
 main-benchmark worlds, and the 5 hand-designed scenarios (long walls, a
 C-trap, a doorway: structure the random generator never produces).
 
+**Baselines.** Besides plain (uniform) RRT*, the learned sampler is compared
+with **Informed RRT\*** (Gammell et al., IROS 2014; `InformedSampler` in
+`planners/samplers.py`). Once a path of length c exists, it samples only
+inside the ellipse `|x - start| + |x - goal| <= c`, the only region where a
+shorter path can pass. It needs no learning, but it knows nothing before the
+first path and ignores obstacles. `RRT* + learned + informed` combines the
+two: heatmap samples, kept only inside the ellipse.
+
 **Results** (medians; `results/learned/eval_summary.md` has every number):
 
-| | iterations until within 5% of best known cost | | cost after 500 iterations | |
-|---|---|---|---|---|
-| test set | RRT* | RRT* + learned | RRT* | RRT* + learned |
-| held-out random (100 problems) | 2 038 | **251** (8.1x fewer) | 1.222 | **1.019** |
-| main benchmark (30 worlds) | 2 348 | **550** (4.3x fewer) | 1.211 | **1.059** |
-| scenarios (5, unseen structure) | 2 092 | **625** (3.3x fewer) | 1.249 | **1.063** |
+Iterations until within 5% of the best known cost (lower is better):
 
-- Learned beats uniform at 1 000 iterations on **100 of 100** held-out problems
-  and **29 of 29** benchmark worlds (Wilcoxon p < 1e-8 for both).
-- On the **maze**, uniform RRT* needs 1 455 iterations for a first path; with
-  learned sampling it needs 1 148.
-- It gets close to the **exact Dijkstra sampler** (which samples from the true
-  training target), reaching 251 vs 212 iterations to within 5%. The gap is
-  biggest on unseen structure (maze first path: 1 148 vs 627).
+| test set | RRT* | Informed RRT* | RRT* + learned | learned + informed | exact Dijkstra (reference) |
+|---|---|---|---|---|---|
+| held-out random (100 problems) | 2 044 | 892 | 258 | **232** | 226 |
+| main benchmark (30 worlds) | 2 354 | 1 792 | 552 | **544** | 498 |
+| scenarios (5, unseen structure) | 2 124 | 1 718 | 625 | **580** | 510 |
+
+- Learned sampling needs **3.4-7.9x fewer iterations** than plain RRT* and beats
+  it at 1 000 iterations on **100 of 100** held-out problems and **29 of 29**
+  benchmark worlds (Wilcoxon p < 1e-8 for both).
+- **Learned beats Informed RRT\* early**: better at 1 000 iterations on 67% of
+  held-out problems and all 29 benchmark worlds (p < 1e-8). Informed RRT*
+  can't help before the first path, and on corner-to-corner worlds its first
+  ellipse covers most of the map, so it starts slowly.
+- **Given enough iterations, Informed RRT\* catches up**: at 5 000 iterations,
+  learned and informed are tied on the held-out set (p = 0.87).
+- **Combining them is best**: learned + informed beats Informed RRT* at 5 000
+  iterations (p < 1e-5) and is the fastest real method on every set. Only the
+  exact Dijkstra reference is faster.
+- On the **maze**, uniform and Informed RRT* need 1 455 iterations for a first
+  path; with learned sampling it takes 1 148 (exact Dijkstra: 627, so the
+  network leaves room on unseen structure).
 
 **Caveats, stated plainly:**
 
-- *Wall-clock:* inference costs ~7 ms alone (~11 ms under the parallel
-  evaluation). On these easy worlds uniform RRT* finds a first path in ~3 ms,
+- *Wall-clock:* inference costs ~7 ms alone (12-42 ms in the parallel
+  evaluation, depending on machine load). On these easy worlds uniform RRT*
+  finds a first path in a few ms,
   so learned sampling is **slower to the first path in milliseconds** and wins
   only on iterations / convergence.
 - *In 2-D you don't need the network:* the exact Dijkstra sampler is better

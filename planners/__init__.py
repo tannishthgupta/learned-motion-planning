@@ -11,7 +11,7 @@ from .astar import AStarPlanner
 from .base import METRIC_FIELDS, Planner, make_metrics, path_length, verify_path
 from .rrt import RRTPlanner
 from .rrt_star import RRTStarPlanner
-from .samplers import HeatmapSampler, UniformSampler
+from .samplers import HeatmapSampler, InformedSampler, UniformSampler
 from .tree import Tree
 
 #: Canonical ordering used by the benchmark and every plot legend.
@@ -36,7 +36,7 @@ def default_planners(seed=None, time_budget=10.0):
 
 __all__ = [
     "AStarPlanner", "RRTPlanner", "RRTStarPlanner",
-    "UniformSampler", "HeatmapSampler",
+    "UniformSampler", "HeatmapSampler", "InformedSampler",
     "Planner", "Tree", "path_length", "verify_path", "make_metrics",
     "METRIC_FIELDS", "PLANNER_ORDER", "default_planners",
 ]

@@ -8,31 +8,37 @@ mix = 0.90 (chosen on the validation set), 5000 iterations per run. Normalised c
 
 | method | success | first sol. (iters) | first sol. (ms) | sampler set-up (ms) | cost@100 | cost@250 | cost@500 | cost@1000 | cost@2000 | cost@5000 | iters to within 5% |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| RRT | 100% | 120 | 2.2 | 0.0 | not reached | 1.314 | 1.282 | 1.281 | 1.280 | 1.280 | not reached |
-| RRT + learned | 100% | 80 | 13.6 | 11.4 | 1.277 | 1.173 | 1.167 | 1.167 | 1.167 | 1.167 | not reached |
-| RRT* | 100% | 120 | 3.2 | 0.0 | not reached | 1.292 | 1.222 | 1.136 | 1.052 | 1.011 | 2038 |
-| RRT* + Dijkstra | 100% | 74 | 7.2 | 4.1 | 1.126 | 1.041 | 1.016 | 1.006 | 1.002 | 1.000 | 212 |
-| RRT* + learned | 100% | 80 | 15.1 | 11.5 | 1.158 | 1.050 | 1.019 | 1.007 | 1.003 | 1.000 | 251 |
+| RRT | 100% | 120 | 2.9 | 0.0 | not reached | 1.317 | 1.283 | 1.282 | 1.281 | 1.281 | not reached |
+| RRT + learned | 100% | 80 | 14.9 | 11.9 | 1.278 | 1.173 | 1.167 | 1.167 | 1.167 | 1.167 | not reached |
+| RRT* | 100% | 120 | 4.4 | 0.0 | not reached | 1.293 | 1.224 | 1.138 | 1.053 | 1.011 | 2044 |
+| RRT* + Dijkstra | 100% | 74 | 8.4 | 4.3 | 1.127 | 1.042 | 1.017 | 1.007 | 1.003 | 1.001 | 226 |
+| RRT* + informed | 100% | 120 | 4.4 | 0.0 | not reached | 1.240 | 1.130 | 1.035 | 1.005 | 1.000 | 892 |
+| RRT* + learned | 100% | 80 | 16.6 | 12.1 | 1.160 | 1.051 | 1.020 | 1.008 | 1.003 | 1.001 | 258 |
+| RRT* + learned + informed | 100% | 80 | 16.4 | 11.7 | 1.157 | 1.044 | 1.016 | 1.005 | 1.001 | 1.000 | 232 |
 
 ## benchmark
 
 | method | success | first sol. (iters) | first sol. (ms) | sampler set-up (ms) | cost@100 | cost@250 | cost@500 | cost@1000 | cost@2000 | cost@5000 | iters to within 5% |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| RRT | 100% | 253 | 5.7 | 0.0 | not reached | not reached | 1.261 | 1.248 | 1.246 | 1.245 | not reached |
-| RRT + learned | 98% | 170 | 16.6 | 11.1 | not reached | 1.202 | 1.167 | 1.166 | 1.166 | 1.166 | not reached |
-| RRT* | 100% | 253 | 7.7 | 0.0 | not reached | not reached | 1.211 | 1.140 | 1.058 | 1.012 | 2348 |
-| RRT* + Dijkstra | 100% | 174 | 10.8 | 4.0 | not reached | 1.114 | 1.049 | 1.019 | 1.006 | 1.001 | 490 |
-| RRT* + learned | 98% | 170 | 19.5 | 11.1 | not reached | 1.133 | 1.059 | 1.021 | 1.007 | 1.001 | 550 |
+| RRT | 100% | 253 | 19.3 | 0.0 | not reached | not reached | 1.261 | 1.249 | 1.247 | 1.246 | not reached |
+| RRT + learned | 98% | 170 | 57.4 | 41.7 | not reached | 1.203 | 1.167 | 1.167 | 1.167 | 1.167 | not reached |
+| RRT* | 100% | 253 | 27.0 | 0.0 | not reached | not reached | 1.212 | 1.141 | 1.060 | 1.013 | 2354 |
+| RRT* + Dijkstra | 100% | 174 | 37.6 | 13.1 | not reached | 1.115 | 1.050 | 1.019 | 1.006 | 1.001 | 498 |
+| RRT* + informed | 100% | 253 | 29.4 | 0.0 | not reached | not reached | 1.216 | 1.134 | 1.038 | 1.004 | 1792 |
+| RRT* + learned | 98% | 170 | 68.6 | 41.7 | not reached | 1.133 | 1.059 | 1.021 | 1.008 | 1.002 | 552 |
+| RRT* + learned + informed | 98% | 170 | 66.7 | 41.4 | not reached | 1.131 | 1.059 | 1.020 | 1.006 | 1.001 | 544 |
 
 ## scenarios
 
 | method | success | first sol. (iters) | first sol. (ms) | sampler set-up (ms) | cost@100 | cost@250 | cost@500 | cost@1000 | cost@2000 | cost@5000 | iters to within 5% |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| RRT | 100% | 272 | 4.0 | 0.0 | not reached | not reached | 1.291 | 1.285 | 1.271 | 1.271 | not reached |
-| RRT + learned | 100% | 196 | 15.5 | 10.3 | not reached | 1.194 | 1.170 | 1.170 | 1.170 | 1.170 | not reached |
-| RRT* | 100% | 272 | 6.8 | 0.0 | not reached | not reached | 1.249 | 1.155 | 1.054 | 1.012 | 2092 |
-| RRT* + Dijkstra | 100% | 182 | 10.4 | 3.5 | not reached | 1.102 | 1.051 | 1.017 | 1.006 | 1.001 | 508 |
-| RRT* + learned | 100% | 196 | 17.3 | 10.4 | not reached | 1.119 | 1.063 | 1.024 | 1.006 | 1.001 | 625 |
+| RRT | 100% | 272 | 16.1 | 0.0 | not reached | not reached | 1.291 | 1.286 | 1.272 | 1.272 | not reached |
+| RRT + learned | 100% | 196 | 55.1 | 38.0 | not reached | 1.194 | 1.170 | 1.170 | 1.170 | 1.170 | not reached |
+| RRT* | 100% | 272 | 25.3 | 0.0 | not reached | not reached | 1.250 | 1.155 | 1.055 | 1.013 | 2124 |
+| RRT* + Dijkstra | 100% | 182 | 32.6 | 11.1 | not reached | 1.102 | 1.052 | 1.018 | 1.007 | 1.001 | 510 |
+| RRT* + informed | 100% | 272 | 26.0 | 0.0 | not reached | not reached | 1.250 | 1.133 | 1.035 | 1.002 | 1718 |
+| RRT* + learned | 100% | 196 | 65.2 | 38.1 | not reached | 1.119 | 1.064 | 1.025 | 1.007 | 1.002 | 625 |
+| RRT* + learned + informed | 100% | 196 | 64.3 | 38.1 | not reached | 1.124 | 1.059 | 1.019 | 1.005 | 1.001 | 580 |
 
 ## Paired significance tests
 
@@ -41,16 +47,40 @@ One pair per problem (median over seeds). Wilcoxon signed-rank, two-sided.
 | set | comparison | k | problems | A better | B better | median A/B | p |
 |---|---|---|---|---|---|---|---|
 | test | RRT* + learned vs RRT* | 500 | 99 | 100% | 0% | 0.850 | 5.7e-18 |
+| test | RRT* + informed vs RRT* | 500 | 96 | 84% | 14% | 0.949 | 1.1e-12 |
+| test | RRT* + learned vs RRT* + informed | 500 | 99 | 82% | 18% | 0.926 | 3.7e-15 |
+| test | RRT* + learned + informed vs RRT* + informed | 500 | 99 | 100% | 0% | 0.922 | 5.7e-18 |
+| test | RRT* + learned + informed vs RRT* + learned | 500 | 99 | 83% | 16% | 0.996 | 2.7e-10 |
 | test | RRT* + learned vs RRT* + Dijkstra | 500 | 99 | 26% | 74% | 1.003 | 2.3e-08 |
 | test | RRT* + learned vs RRT* | 1000 | 100 | 100% | 0% | 0.895 | 3.9e-18 |
+| test | RRT* + informed vs RRT* | 1000 | 99 | 86% | 14% | 0.931 | 5.2e-15 |
+| test | RRT* + learned vs RRT* + informed | 1000 | 100 | 67% | 33% | 0.968 | 3.8e-11 |
+| test | RRT* + learned + informed vs RRT* + informed | 1000 | 100 | 93% | 3% | 0.967 | 3.3e-17 |
+| test | RRT* + learned + informed vs RRT* + learned | 1000 | 100 | 82% | 18% | 0.998 | 3.4e-09 |
 | test | RRT* + learned vs RRT* + Dijkstra | 1000 | 100 | 39% | 61% | 1.000 | 0.013 |
-| test | RRT* + learned vs RRT* | 5000 | 100 | 99% | 1% | 0.990 | 4.8e-18 |
+| test | RRT* + learned vs RRT* | 5000 | 100 | 99% | 1% | 0.990 | 5e-18 |
+| test | RRT* + informed vs RRT* | 5000 | 100 | 100% | 0% | 0.991 | 3.9e-18 |
+| test | RRT* + learned vs RRT* + informed | 5000 | 100 | 33% | 67% | 1.000 | 0.87 |
+| test | RRT* + learned + informed vs RRT* + informed | 5000 | 100 | 57% | 22% | 1.000 | 2.5e-06 |
+| test | RRT* + learned + informed vs RRT* + learned | 5000 | 100 | 91% | 9% | 1.000 | 3.6e-13 |
 | test | RRT* + learned vs RRT* + Dijkstra | 5000 | 100 | 36% | 64% | 1.000 | 0.053 |
 | benchmark | RRT* + learned vs RRT* | 500 | 28 | 96% | 4% | 0.870 | 2.2e-08 |
+| benchmark | RRT* + informed vs RRT* | 500 | 25 | 64% | 32% | 0.993 | 0.018 |
+| benchmark | RRT* + learned vs RRT* + informed | 500 | 28 | 96% | 4% | 0.878 | 5.2e-08 |
+| benchmark | RRT* + learned + informed vs RRT* + informed | 500 | 28 | 96% | 4% | 0.874 | 7.5e-08 |
+| benchmark | RRT* + learned + informed vs RRT* + learned | 500 | 28 | 50% | 39% | 1.000 | 0.8 |
 | benchmark | RRT* + learned vs RRT* + Dijkstra | 500 | 29 | 31% | 69% | 1.009 | 0.0014 |
 | benchmark | RRT* + learned vs RRT* | 1000 | 29 | 100% | 0% | 0.899 | 3.7e-09 |
+| benchmark | RRT* + informed vs RRT* | 1000 | 29 | 69% | 31% | 0.996 | 0.043 |
+| benchmark | RRT* + learned vs RRT* + informed | 1000 | 29 | 100% | 0% | 0.899 | 3.7e-09 |
+| benchmark | RRT* + learned + informed vs RRT* + informed | 1000 | 29 | 97% | 3% | 0.897 | 7.5e-09 |
+| benchmark | RRT* + learned + informed vs RRT* + learned | 1000 | 29 | 66% | 34% | 0.999 | 0.16 |
 | benchmark | RRT* + learned vs RRT* + Dijkstra | 1000 | 29 | 45% | 55% | 1.002 | 0.59 |
 | benchmark | RRT* + learned vs RRT* | 5000 | 30 | 93% | 7% | 0.991 | 4.4e-06 |
+| benchmark | RRT* + informed vs RRT* | 5000 | 30 | 93% | 7% | 0.993 | 1.6e-05 |
+| benchmark | RRT* + learned vs RRT* + informed | 5000 | 30 | 57% | 43% | 0.998 | 0.026 |
+| benchmark | RRT* + learned + informed vs RRT* + informed | 5000 | 30 | 87% | 13% | 0.998 | 0.00017 |
+| benchmark | RRT* + learned + informed vs RRT* + learned | 5000 | 29 | 76% | 24% | 0.999 | 0.00024 |
 | benchmark | RRT* + learned vs RRT* + Dijkstra | 5000 | 30 | 37% | 63% | 1.000 | 0.1 |
 
 ## Scenarios, one by one
@@ -61,25 +91,35 @@ One pair per problem (median over seeds). Wilcoxon signed-rank, two-sided.
 | bug_trap | RRT + learned | 100% | 328 | 1.239 | 1.239 |
 | bug_trap | RRT* | 100% | 426 | 1.237 | 1.026 |
 | bug_trap | RRT* + Dijkstra | 100% | 384 | 1.034 | 1.004 |
+| bug_trap | RRT* + informed | 100% | 426 | 1.239 | 1.023 |
 | bug_trap | RRT* + learned | 100% | 328 | 1.040 | 1.006 |
+| bug_trap | RRT* + learned + informed | 100% | 328 | 1.044 | 1.005 |
 | cluttered_discs | RRT | 100% | 208 | 1.242 | 1.242 |
 | cluttered_discs | RRT + learned | 100% | 186 | 1.150 | 1.150 |
 | cluttered_discs | RRT* | 100% | 208 | 1.111 | 1.010 |
 | cluttered_discs | RRT* + Dijkstra | 100% | 163 | 1.012 | 1.000 |
+| cluttered_discs | RRT* + informed | 100% | 208 | 1.091 | 1.001 |
 | cluttered_discs | RRT* + learned | 100% | 186 | 1.014 | 1.001 |
-| empty | RRT | 100% | 115 | 1.195 | 1.195 |
+| cluttered_discs | RRT* + learned + informed | 100% | 186 | 1.012 | 1.000 |
+| empty | RRT | 100% | 115 | 1.196 | 1.196 |
 | empty | RRT + learned | 100% | 95 | 1.119 | 1.119 |
-| empty | RRT* | 100% | 115 | 1.087 | 1.006 |
-| empty | RRT* + Dijkstra | 100% | 95 | 1.012 | 1.000 |
+| empty | RRT* | 100% | 115 | 1.088 | 1.007 |
+| empty | RRT* + Dijkstra | 100% | 95 | 1.012 | 1.001 |
+| empty | RRT* + informed | 100% | 115 | 1.057 | 1.000 |
 | empty | RRT* + learned | 100% | 95 | 1.019 | 1.001 |
+| empty | RRT* + learned + informed | 100% | 95 | 1.015 | 1.000 |
 | maze | RRT | 100% | 1455 | not reached | 1.416 |
 | maze | RRT + learned | 100% | 1148 | not reached | 1.278 |
 | maze | RRT* | 100% | 1455 | not reached | 1.027 |
 | maze | RRT* + Dijkstra | 100% | 627 | 1.051 | 1.002 |
+| maze | RRT* + informed | 100% | 1455 | not reached | 1.025 |
 | maze | RRT* + learned | 100% | 1148 | not reached | 1.008 |
-| narrow_gap | RRT | 100% | 233 | 1.269 | 1.249 |
-| narrow_gap | RRT + learned | 100% | 134 | 1.111 | 1.111 |
-| narrow_gap | RRT* | 100% | 233 | 1.133 | 1.010 |
-| narrow_gap | RRT* + Dijkstra | 100% | 134 | 1.016 | 1.001 |
-| narrow_gap | RRT* + learned | 100% | 134 | 1.015 | 1.001 |
+| maze | RRT* + learned + informed | 100% | 1148 | not reached | 1.008 |
+| narrow_gap | RRT | 100% | 233 | 1.270 | 1.251 |
+| narrow_gap | RRT + learned | 100% | 134 | 1.112 | 1.112 |
+| narrow_gap | RRT* | 100% | 233 | 1.134 | 1.011 |
+| narrow_gap | RRT* + Dijkstra | 100% | 134 | 1.017 | 1.002 |
+| narrow_gap | RRT* + informed | 100% | 233 | 1.114 | 1.002 |
+| narrow_gap | RRT* + learned | 100% | 134 | 1.016 | 1.002 |
+| narrow_gap | RRT* + learned + informed | 100% | 134 | 1.015 | 1.001 |
 
