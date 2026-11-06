@@ -90,6 +90,23 @@ class ArmEnvironment:
         self.state_checks = 0
         self.motion_checks = 0
         self._free_fraction = None
+        self._pack_obstacles()
+
+    def _pack_obstacles(self):
+        """Stack the obstacles into arrays so all of them are checked at once.
+
+        Shapes carry two trailing length-1 axes so they broadcast against
+        link segments shaped (poses, links). Call again if `obstacles` is
+        edited after construction.
+        """
+        circles = [o for o in self.obstacles if isinstance(o, CircleObstacle)]
+        rects = [o for o in self.obstacles if isinstance(o, RectObstacle)]
+        if len(circles) + len(rects) != len(self.obstacles):
+            raise TypeError("arm worlds support only rectangles and circles")
+        self._circ_c = np.array([[o.cx, o.cy] for o in circles], float).reshape(-1, 1, 1, 2)
+        self._circ_r = np.array([o.r for o in circles], float).reshape(-1, 1, 1)
+        boxes = np.array([o.box for o in rects], float).reshape(-1, 4)
+        self._boxes = tuple(boxes[:, k].reshape(-1, 1, 1) for k in range(4))
 
     @property
     def dimension(self):
@@ -110,14 +127,15 @@ class ArmEnvironment:
         clear = self.arm.link_radius + margin
         hit = np.zeros(Q.shape[0], dtype=bool)
 
-        for o in self.obstacles:
-            if isinstance(o, CircleObstacle):
-                d = col.segment_circle_distance(A, B, (o.cx, o.cy), o.r)
-            elif isinstance(o, RectObstacle):
-                d = col.segment_box_distance(A, B, o.box)
-            else:
-                raise TypeError("unsupported obstacle %r" % type(o))
-            hit |= (d <= clear).any(axis=1)
+        # All circles in one go, then all boxes in one go. Each distance
+        # array is shaped (obstacles, poses, links); a pose collides if any
+        # link is too close to any obstacle.
+        if len(self._circ_r):
+            d = col.segment_circle_distance(A, B, self._circ_c, self._circ_r)
+            hit |= (d <= clear).any(axis=(0, 2))
+        if len(self._boxes[0]):
+            d = col.segment_box_distance(A, B, self._boxes)
+            hit |= (d <= clear).any(axis=(0, 2))
 
         if self.self_collision and len(self._pairs):
             i, j = self._pairs[:, 0], self._pairs[:, 1]
