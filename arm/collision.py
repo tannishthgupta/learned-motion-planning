@@ -47,15 +47,18 @@ def _segment_hits_box(A, B, box):
     """
     xmin, ymin, xmax, ymax = box
     D = B - A
-    t_lo = np.zeros(A.shape[:-1])
-    t_hi = np.ones(A.shape[:-1])
-    ok = np.ones(A.shape[:-1], dtype=bool)
+    # The box limits may be arrays (many boxes at once), so the result takes
+    # the broadcast shape of segments and boxes.
+    shape = np.broadcast_shapes(A.shape[:-1], np.shape(xmin))
+    t_lo = np.zeros(shape)
+    t_hi = np.ones(shape)
+    ok = np.ones(shape, dtype=bool)
     for axis, lo, hi in ((0, xmin, xmax), (1, ymin, ymax)):
         a = A[..., axis]
         d = D[..., axis]
         parallel = d == 0.0
         # A segment parallel to this axis's walls is inside the slab or never.
-        ok &= ~(parallel & ((a < lo) | (a > hi)))
+        ok = ok & ~(parallel & ((a < lo) | (a > hi)))
         safe_d = np.where(parallel, 1.0, d)
         t1 = (lo - a) / safe_d
         t2 = (hi - a) / safe_d
@@ -72,11 +75,16 @@ def segment_box_distance(A, B, box):
     If the segment misses the box, the closest pair of points always involves
     either a segment endpoint or a box corner, so the minimum over those six
     candidate distances is exact.
+
+    `box` is (xmin, ymin, xmax, ymax). Each entry may be a scalar (one box)
+    or an array shaped (K, 1, ..., 1) for K boxes at once, in which case the
+    result gains a leading axis of length K.
     """
     xmin, ymin, xmax, ymax = box
     d = np.minimum(_point_box_distance(A, box), _point_box_distance(B, box))
-    for corner in ((xmin, ymin), (xmin, ymax), (xmax, ymin), (xmax, ymax)):
-        d = np.minimum(d, point_segment_distance(np.asarray(corner, float), A, B))
+    for cx, cy in ((xmin, ymin), (xmin, ymax), (xmax, ymin), (xmax, ymax)):
+        corner = np.stack(np.broadcast_arrays(np.asarray(cx, float), np.asarray(cy, float)), axis=-1)
+        d = np.minimum(d, point_segment_distance(corner, A, B))
     return np.where(_segment_hits_box(A, B, box), 0.0, d)
 
 

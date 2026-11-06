@@ -1,0 +1,18 @@
+{
+  "chosen_mix": 0.5,
+  "chosen_epoch": 10,
+  "chosen_checkpoint": "learning\\models\\arm4_cvae_e10.pt",
+  "worlds": 30,
+  "scores": {
+    "learned e10 mix=0.50": 1.4587178242389898,
+    "learned e10 mix=0.25": 1.4800096119418749,
+    "learned e30 mix=0.25": 1.5118588168450593,
+    "learned e10 mix=0.90": 1.531171142642786,
+    "learned e60 mix=0.25": 1.5676673322349284,
+    "learned e30 mix=0.50": 1.6239735515784088,
+    "RRT*": 1.7354392183688576,
+    "learned e60 mix=0.50": 1.7647888546793027,
+    "learned e30 mix=0.90": 1.7656981761577029,
+    "learned e60 mix=0.90": 1.896592437715843
+  }
+}

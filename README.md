@@ -9,7 +9,8 @@ simulated mobile robot in a dependency-free 2D environment.
 
 Simulation world, all three planners, the benchmark harness and the evaluation
 figures are **complete**, plus two extensions: learned sampling for RRT*, and
-planning for a planar robot arm with N joints (see below). 84 unit tests
+planning for a planar robot arm with N joints, with its own learned sampler
+(see below). 92 unit tests
 passing. Remaining work is the written
 report and slides, which draw on `results/summary.md` and `results/chart_*.png`.
 
@@ -39,7 +40,7 @@ python run_benchmark.py --from-cache   # re-analyse the last run, no re-running
 
 python arm_demo.py                # robot-arm planning figures -> results/arm/
 
-python -m unittest discover -s tests -t . -v    # 84 tests (torch tests skip if absent)
+python -m unittest discover -s tests -t . -v    # 92 tests (torch tests skip if absent)
 ```
 
 `--from-cache` matters: the sweep takes minutes, and re-running it just to
@@ -69,7 +70,7 @@ arm/
     environment.py   joint-space planning problem (same interface as env/)
     problems.py      the 2-joint scenario and random arm worlds
     plot.py          world view and joint-space (C-space) figures
-learning/            learned sampling: data, U-Net, training, evaluation
+learning/            learned sampling: 2-D U-Net (no prefix) and arm CVAE (arm_*.py)
 benchmark/
     runner.py        runs every planner over an identical world set
     analysis.py      aggregation, including the common-solved-subset logic
@@ -273,13 +274,69 @@ checked poses must clear the obstacles by link radius + delta/2. So a motion
 the check accepts cannot clip an obstacle between two checks. A test re-checks
 accepted motions 20x more finely and never finds a collision.
 
-**Status.** Stage 1 of 3 is done: arm model, collision checking, N-D planners,
-figures. Next: (2) the scaling experiment, 2 to 7 joints, exact grid search vs
-sampling; (3) a learned sampler that proposes good arm poses directly. Early
-runs show high-joint random worlds are hard: some 6- and 7-joint worlds took
-~20 000 iterations or went unsolved, and a "reach into a shelf slot" scenario
-was dropped from this stage because no planner solved it in 20 000
-iterations, so it is unconfirmed whether it can be solved at all.
+### Learned sampling for the arm (4 joints)
+
+The 2-D sampler's 64x64 heatmap has no arm equivalent: a grid over 4 joint
+angles at the same resolution has 16 million cells, over 7 joints 4 trillion.
+So the arm sampler **generates poses directly**, with a conditional VAE
+(Ichter, Harrison & Pavone, ICRA 2018). Given the obstacle image and the start
+and goal angles, it turns random noise into poses that resemble poses on good
+paths for that problem. RRT* draws half its samples from it, half uniformly.
+
+```bash
+python -m learning.arm_data --dof 4           # ~40 min: long Informed RRT* runs -> labels
+python -m learning.arm_train --dof 4          # ~1 min, saves checkpoints at epochs 10/30/60
+python -m learning.arm_evaluate --dof 4 --tune   # pick checkpoint + mix on VALIDATION worlds
+python -m learning.arm_evaluate --dof 4       # final run on held-out TEST worlds
+python -m learning.arm_plots --dof 4
+```
+
+**Labels** come from planning, since the exact answer cannot be computed: 700
+random worlds, each solved by a 2 500-iteration Informed RRT* run, with 24
+poses recorded along the best path (474 worlds solved). The data (0.5 MB) is
+committed because it takes about an hour of computation to make.
+
+**Results** on 60 held-out worlds (49 with a known solution), 3 runs each, 2 000
+iterations (`results/arm/eval_arm4_summary.md`):
+
+| method | success@2000 | mean cost@500 | mean cost@2000 | median final cost, worlds all solved |
+|---|---|---|---|---|
+| RRT* | 87% | 2.11 | 1.54 | 1.239 |
+| Informed RRT* | 87% | 1.97 | 1.39 | 1.030 |
+| RRT* + learned | 85% | 1.83 | 1.39 | 1.061 |
+| RRT* + learned + informed | 85% | **1.78** | **1.36** | **1.011** |
+
+(Cost is relative to the best known path; a run with no path yet counts as 3.)
+
+- **Learned beats plain RRT\*** at every checkpoint: shorter paths on 77-79% of
+  worlds (p < 0.005), about 26% shorter at 500 iterations.
+- **Learned roughly ties Informed RRT\*** in 4 joints: no significant difference
+  at any checkpoint (p = 0.19, 0.86, 0.07). Learned leads early, Informed catches
+  up by 2 000 iterations.
+- **Combining them is best early** (beats Informed RRT* at 500 iterations,
+  p = 0.03) and has the lowest final cost, but the late difference is not
+  significant.
+- **Success rates are the same** within noise (85-87%).
+
+**What did not work, and is worth knowing:**
+- *Training longer made planning worse.* Later checkpoints generate poses much
+  closer to the training paths (4.3x closer than random at epoch 60, vs 2.4x
+  at epoch 10), yet solved fewer worlds (67% vs 90% on validation at mix 0.9):
+  they concentrate samples so tightly that the planner stops exploring. So the
+  checkpoint was chosen by planning results, not by the model's own loss.
+- *Trusting the network more made it worse too:* mix 0.5 beat 0.9.
+- *In 4 joints, geometry is as good as learning.* The next step is 7 joints,
+  where uniform and ellipsoid sampling struggle and learning has more to gain.
+
+![Arm learned sampling: success rate and cost](results/arm/arm4_convergence.png)
+
+**Arm stages.** (1) arm and N-D planners: done. (3) learned sampler: done for
+4 joints. Still to do: (2) the scaling experiment, 2 to 7 joints, exact grid
+search vs sampling; and the learned sampler at 7 joints. Early runs showed
+high-joint random worlds are hard (some 6- and 7-joint worlds took ~20 000
+iterations or went unsolved). A "reach into a shelf slot" scenario was dropped
+because no planner solved it in 20 000 iterations, so it is unconfirmed
+whether it can be solved at all.
 
 ## Design decisions worth defending in the viva
 

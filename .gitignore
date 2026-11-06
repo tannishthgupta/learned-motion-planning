@@ -5,8 +5,10 @@ venv/
 .vscode/
 .idea/
 
-# Training data is regenerated in ~10 s by `python -m learning.dataset`
-learning/data/
+# 2-D training data is regenerated in ~10 s by `python -m learning.dataset`.
+# Arm data takes about an hour of planning to make, so it is kept (0.5 MB).
+learning/data/*
+!learning/data/arm*.npz
 
 # Throwaway smoke-test outputs (`--quick` runs)
 *_quick.*
@@ -14,3 +16,6 @@ learning/data/
 # Local notes for Claude Code, not part of the project
 claude.md
 CLAUDE.md
+
+# Training checkpoints; tuning copies the chosen one to arm<dof>_cvae.pt
+learning/models/*_e[0-9]*.pt

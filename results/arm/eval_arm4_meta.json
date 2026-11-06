@@ -1,0 +1,13 @@
+{
+  "dof": 4,
+  "mix": 0.5,
+  "max_iters": 2000,
+  "seeds": 3,
+  "n_test": 60,
+  "planner": {
+    "step_size": 1.5,
+    "goal_tolerance": 0.5,
+    "goal_bias": 0.05
+  },
+  "model": "learning\\models\\arm4_cvae.pt"
+}
