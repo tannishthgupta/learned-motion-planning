@@ -30,9 +30,7 @@ path-length gap a fair measurement rather than an artefact of tuning.
 import math
 import random
 
-from env.geometry import distance
-
-from .base import Planner
+from .base import Planner, distance
 from .samplers import UniformSampler
 from .tree import Tree
 
@@ -43,7 +41,18 @@ def steer(from_p, to_p, step_size):
     If the target is already within one step, it is returned unchanged -- this
     lets the tree land exactly on the goal rather than perpetually overshooting
     it by a fraction of a step.
+
+    Works in any dimension: (x, y) for the mobile robot, or one angle per
+    joint for the robot arm.
     """
+    if len(from_p) != 2:
+        d = math.dist(from_p, to_p)
+        if d <= step_size or d == 0.0:
+            return tuple(to_p)
+        scale = step_size / d
+        return tuple(f + (t - f) * scale for f, t in zip(from_p, to_p))
+
+    # 2-D case, kept exactly as originally written.
     dx = to_p[0] - from_p[0]
     dy = to_p[1] - from_p[1]
     d = math.hypot(dx, dy)

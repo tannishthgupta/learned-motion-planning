@@ -15,9 +15,18 @@ RRT* as interchangeable. Anything planner-specific (grid resolution, step
 size, rewiring radius) is a constructor argument, not a plan() argument.
 """
 
+import math
 import time
 
-from env.geometry import distance
+
+def distance(p, q):
+    """Euclidean distance in any dimension.
+
+    (x, y) points for the mobile robot; joint-angle vectors for the arm, where
+    it measures how far the joints turn in total (in radians). For 2-D points
+    it returns exactly the same value as env.geometry.distance.
+    """
+    return math.dist(p, q)
 
 # Fixed metric schema. Every planner fills every key, so CSV rows line up even
 # though the three algorithms count very different internal work.

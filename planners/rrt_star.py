@@ -42,9 +42,7 @@ import math
 import random
 import time
 
-from env.geometry import distance
-
-from .base import Planner
+from .base import Planner, distance
 from .rrt import steer
 from .samplers import UniformSampler
 from .tree import Tree
@@ -110,15 +108,21 @@ class RRTStarPlanner(Planner):
     # ------------------------------------------------------------------
 
     def _compute_gamma(self, env):
-        """Derive the rewiring constant from this environment's free area."""
-        free_area = env.width * env.height * max(0.05, 1.0 - env.obstacle_density())
-        return self.gamma_factor * gamma_star(free_area, dimension=2)
+        """Derive the rewiring constant from this environment's free volume.
+
+        For the 2-D world that is the free area; for an N-joint arm it is the
+        collision-free volume of joint space, estimated by the environment.
+        """
+        self._dim = getattr(env, "dimension", 2)
+        return self.gamma_factor * gamma_star(env.free_volume(), dimension=self._dim)
 
     def _radius(self, gamma, n):
-        """Shrinking ball radius r(n), capped at the steering range."""
+        """Shrinking ball radius r(n) = gamma * (log n / n)^(1/d), capped at the steering range."""
         if n <= 1:
             return self.step_size
-        return min(gamma * math.sqrt(math.log(n) / n), self.step_size)
+        if self._dim == 2:
+            return min(gamma * math.sqrt(math.log(n) / n), self.step_size)
+        return min(gamma * (math.log(n) / n) ** (1.0 / self._dim), self.step_size)
 
     # ------------------------------------------------------------------
 
